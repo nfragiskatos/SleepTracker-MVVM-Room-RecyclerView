@@ -58,6 +58,10 @@ class SleepTrackerViewModel(
         formatNights(nights, application.resources)
     }
 
+    /*
+    State variable that the Sleep Tracker fragment can observe and know when it should navigate to
+    the Sleep Quality screen.
+     */
     private val _navigateToSleepQuality = MutableLiveData<SleepNight>()
     val navigateToSleepQuality: LiveData<SleepNight>
         get() = _navigateToSleepQuality
@@ -128,6 +132,8 @@ class SleepTrackerViewModel(
             oldNight.endTimeMilli = System.currentTimeMillis()
 
             update(oldNight)
+
+            // Notifies Sleep Tracker fragment that it can navigate to Sleep Quality fragment
             _navigateToSleepQuality.value = oldNight
         }
     }
