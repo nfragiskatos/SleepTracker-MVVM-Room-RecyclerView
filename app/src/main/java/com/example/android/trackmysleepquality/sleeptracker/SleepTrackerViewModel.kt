@@ -19,6 +19,7 @@ package com.example.android.trackmysleepquality.sleeptracker
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
+import kotlinx.coroutines.Job
 
 /**
  * ViewModel for SleepTrackerFragment.
@@ -26,6 +27,22 @@ import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 class SleepTrackerViewModel(
         val database: SleepDatabaseDao,
         application: Application) : AndroidViewModel(application) {
+
+    /*
+    Job to provide when we use coroutines to query the database. We want to use coroutines because
+    we don't want potentially long running processes on the main UI thread, and coroutines run asynchronously
+    and are non-blocking
+     */
+    private var viewModelJob = Job()
+
+    /*
+    Override just to make sure we clear any job that is possible in the middle of running when the view
+    model is destroyed
+     */
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
 
 }
 
