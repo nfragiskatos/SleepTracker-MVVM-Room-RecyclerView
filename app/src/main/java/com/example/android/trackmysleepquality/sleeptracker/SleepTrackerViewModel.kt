@@ -100,5 +100,27 @@ class SleepTrackerViewModel(
             database.insert(sleepNight)
         }
     }
+
+    fun onStopTracking() {
+        uiScope.launch {
+
+            /*
+            The @launch annotation specifies that we return from the launch uiScope.launch function
+            instead of the lambda.
+             */
+
+            val oldNight = tonight.value ?: return@launch
+
+            oldNight.endTimeMilli = System.currentTimeMillis()
+
+            update(oldNight)
+        }
+    }
+
+    private suspend fun update(sleepNight: SleepNight) {
+        return withContext(Dispatchers.IO) {
+            database.update(sleepNight)
+        }
+    }
 }
 
