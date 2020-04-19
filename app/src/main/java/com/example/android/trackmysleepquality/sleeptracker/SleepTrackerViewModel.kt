@@ -52,6 +52,21 @@ class SleepTrackerViewModel(
     private var tonight = MutableLiveData<SleepNight?>()
     private val nights = database.getAllNights()
 
+    /*
+    General coroutine pattern
+
+    1. launch coroutine (via the scope) that runs on the UI/main thread (because result affects UI
+
+    2. Inside the launch we call a suspend function which does the long running work (this prevents
+    blocking of the UI thread while waiting for result
+
+    3. In the suspend function we switch to run in the IO context (since this long running function has
+    nothing to do with the UI), and the IO context has threads in its pool that are optimized for these
+    kinds of operations
+
+    4. Call database function within the IO context from previous to do the work.
+     */
+
     init {
         initializeTonight()
     }
@@ -69,6 +84,20 @@ class SleepTrackerViewModel(
                 night = null
             }
             night
+        }
+    }
+
+    fun onStartTracking() {
+        uiScope.launch {
+            val newNight = SleepNight()
+            insert(newNight)
+            tonight.value = getTonightFromDatabase()
+        }
+    }
+
+    private suspend fun insert(sleepNight: SleepNight) {
+        return withContext(Dispatchers.IO) {
+            database.insert(sleepNight)
         }
     }
 }
