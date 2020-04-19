@@ -122,5 +122,18 @@ class SleepTrackerViewModel(
             database.update(sleepNight)
         }
     }
+
+    fun onClear() {
+        uiScope.launch {
+            clear()
+            tonight.value = null
+        }
+    }
+
+    private suspend fun clear() {
+        return withContext(Dispatchers.IO) {
+            database.clear()
+        }
+    }
 }
 
