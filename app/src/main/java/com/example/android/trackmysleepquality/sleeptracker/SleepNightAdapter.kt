@@ -17,6 +17,7 @@ class SleepNightAdapter: RecyclerView.Adapter<TextItemViewHolder>() {
     Want to provider a custom set that sets the new value, but also notifies the RecyclerView that
     the data has changed so it can redraw everything on screen based on the new data.
     ** Not the best approach though.
+    This completely clobbers everything and redraws all views even if they don't need to be redrawn.
      */
     var data = listOf<SleepNight>()
     set(value) {
