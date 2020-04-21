@@ -1,10 +1,7 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +9,7 @@ import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.convertDurationToFormatted
 import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
+import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
 /**
  * Created by Nicholas Fragiskatos on 4/20/2020.
@@ -31,25 +29,14 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
         holder.bind(getItem(position))
     }
 
-    class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        /*
-        Variables to make it easier to access these views when we are binding the view holder to the
-        data (onBindViewHolder)
-
-        If I didn't do this, then in onBindViewHolder I'd have to constantly do
-            holder.itemView.findViewById(<Resource>)
-        instead I can access the views directly from the ViewHolder
-         */
-        val sleepLength: TextView = itemView.findViewById(R.id.sleep_length)
-        val quality: TextView = itemView.findViewById(R.id.quality_string)
-        val qualityImage: ImageView = itemView.findViewById(R.id.quality_image)
+    class ViewHolder private constructor(val binding: ListItemSleepNightBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SleepNight) {
             val res = itemView.context.resources
-            sleepLength.text = convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, res)
-            quality.text = convertNumericQualityToString(item.sleepQuality, res)
+            binding.sleepLength.text = convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, res)
+            binding.qualityString.text = convertNumericQualityToString(item.sleepQuality, res)
 
-            qualityImage.setImageResource(when (item.sleepQuality) {
+            binding.qualityImage.setImageResource(when (item.sleepQuality) {
                 0 -> R.drawable.ic_sleep_0
                 1 -> R.drawable.ic_sleep_1
                 2 -> R.drawable.ic_sleep_2
@@ -67,8 +54,9 @@ class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(S
                 The important part is to supply the correct layout resource
                  */
                 val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ListItemSleepNightBinding.inflate(layoutInflater, parent, false)
                 val view = layoutInflater.inflate(R.layout.list_item_sleep_night, parent, false)
-                return ViewHolder(view)
+                return ViewHolder(binding)
             }
         }
     }
