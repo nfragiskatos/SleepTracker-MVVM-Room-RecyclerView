@@ -58,9 +58,17 @@ class SleepTrackerFragment : Fragment() {
 
         val sleepTrackerViewModel = ViewModelProvider(this, viewModelFactory).get(SleepTrackerViewModel::class.java)
 
+        /*
+        Here we want to take our RecyclerView in our resource file (fragment_sleep_tracker.xml) and
+        set its adapter to our custom adapter so it knows what to display.
+         */
         val adapter = SleepNightAdapter()
         binding.sleepList.adapter = adapter
 
+        /*
+        Observe our list of nights and keep setting the refreshing the adapter's data every time the
+        data changes.
+         */
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
