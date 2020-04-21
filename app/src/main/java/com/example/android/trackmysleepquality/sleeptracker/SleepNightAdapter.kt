@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.convertDurationToFormatted
@@ -14,28 +16,19 @@ import com.example.android.trackmysleepquality.database.SleepNight
 /**
  * Created by Nicholas Fragiskatos on 4/20/2020.
  */
-class SleepNightAdapter: RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
 
-    /*
-    Want to provider a custom set that sets the new value, but also notifies the RecyclerView that
-    the data has changed so it can redraw everything on screen based on the new data.
-    ** Not the best approach though.
-    This completely clobbers everything and redraws all views even if they don't need to be redrawn.
-     */
-    var data = listOf<SleepNight>()
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+/*
+Changed this from extending RecyclerView.Adapter to ListAdapter. ListAdapter is a subclass and
+specializes in handling lists of things.
+ */
+class SleepNightAdapter: ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
     }
 
-    override fun getItemCount(): Int = data.size
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(data[position])
+        holder.bind(getItem(position))
     }
 
     class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -79,6 +72,19 @@ class SleepNightAdapter: RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
             }
         }
     }
+}
 
+class SleepNightDiffCallback: DiffUtil.ItemCallback<SleepNight>() {
+    override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+        return oldItem.nightId == newItem.nightId
+    }
+
+    override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+        /*
+        Can do this cause we defined SleepNight as a data class, which automagically provides the
+        equal() functionality. It will implicitly check all field values.
+         */
+        return oldItem == newItem
+    }
 
 }
