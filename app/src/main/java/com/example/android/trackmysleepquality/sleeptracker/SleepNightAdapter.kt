@@ -16,6 +16,9 @@ import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBin
 /*
 Changed this from extending RecyclerView.Adapter to ListAdapter. ListAdapter is a subclass and
 specializes in handling lists of things.
+
+Added a SleepNightListener in the constructor so we can pass a clickListener down to the ViewHolder so
+it can set the clickListener property in our binding.
  */
 class SleepNightAdapter(val clickListener: SleepNightListener): ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
 
@@ -64,6 +67,10 @@ class SleepNightDiffCallback: DiffUtil.ItemCallback<SleepNight>() {
     }
 }
 
+/*
+Just a fancy wrapper for a lambda expression. Will be convenient to use this cause we need to pass it
+around as a variable.
+ */
 class SleepNightListener(val clickListener: (sleepId: Long) -> Unit) {
     fun onClick(night: SleepNight) = clickListener(night.nightId)
 }
